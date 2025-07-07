@@ -1,0 +1,55 @@
+### Framework Design
+---
+
+### Todo
+---
+
+- [ ] Data Preparation
+    - [ ] Dataset
+    - [ ] Metadata
+        - [ ] Meta-table approach
+        - [ ] Description
+        - [ ] Clipping
+        - [ ] Fillna
+    - [ ] Preprocess
+    - [ ] Report generator
+        - [x] Data Waterfall (rdsutils/Datawaterfall)
+    - [ ] Data splitting/generator 
+        - for cross-validation or DL models
+- [ ] Model Design
+    - [ ] Performance definition
+    - [ ] Sample design
+        - mostly in lending...
+        - we did apply static and dynamic sampling to account-level fraud models.
+    - [ ] Segmentation
+    - [ ] Reject Inference
+- [ ] Model Development
+    - [ ] Feature Engineering
+        - Note: this needs to link back to data preparation. The design must be polynorphic in some sense.
+        - One simple solution is to add unique id once and only once at data prep step, and match on that.
+    - [ ] Feature Selection
+        - [x] rdsutils/FeatureSelector
+    - [ ] Hyper-parameter Tuning
+        - [ ] all hail AutoGluon
+    - [ ] Benchmarking
+        - [ ] Previous model loader
+        - [ ] AutoGluon!
+- [ ] Model Selection
+    - [ ] Performance Eval w.r.t. Benchmarks
+        - [ ] rdsutils/Performance eval 
+    - [ ] Model Interpretation
+    - [ ] Implementation Testing
+        - [ ] Pre
+        - [ ] Post
+    - [ ] Segmented analysis and report generation
+    - [ ] Fair-lending
+- [ ] Deployment
+    - [ ] Proto-utils by Thomas
+- [ ] Monitoring
+    - [ ] SageMaker SDK 
+        - [ ] Data Capturing module setup
+        - [ ] Baselining
+- [ ] Pipelining
+    - Might be the most important factor here.
+    - needs to link everything up and fault proven
+    - [ ] experiment with MLFlow/Airflow/whichever SoFi ML platform is using
