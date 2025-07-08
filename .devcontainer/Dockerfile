@@ -7,12 +7,14 @@ ARG NODE_MAJOR=22
 ARG NB_USER=jovyan
 ARG CONDA_DIR=/opt/conda
 
-# Install basic dependencies
+# Install basic dependencies (including Python and pip)
 RUN apt-get update && \
     apt-get install -y \
-    curl \
-    gnupg \
-    ca-certificates \
+      curl \
+      gnupg \
+      ca-certificates \
+      python3 \
+      python3-pip \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Node.js and Claude Code
@@ -27,6 +29,9 @@ RUN mkdir -p /etc/apt/keyrings && \
     npm install -g --unsafe-perm @anthropic-ai/claude-code && \
     apt-get purge --auto-remove -y curl gnupg && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /root/.cache
+
+# Install Rich for enhanced Python terminal output
+RUN pip3 install rich
 
 # Create a script to fix permissions (if not already available)
 RUN echo '#!/bin/bash\n\

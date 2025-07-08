@@ -187,7 +187,11 @@ Building a credit risk model involves several critical steps:
 
 **Key Files**:
 - `end_to_end_example.py`: Complete workflow implementation
+- `end_to_end_readme.md`: Detailed explanation of the 8-step process
 - `config.yaml`: Configuration parameters
+
+**Overview**: 
+See the dedicated `end_to_end_readme.md` in the `08_complete_example/` directory for a comprehensive walkthrough of the complete credit risk modeling process from synthetic data generation through production deployment setup.
 
 ## Best Practices
 

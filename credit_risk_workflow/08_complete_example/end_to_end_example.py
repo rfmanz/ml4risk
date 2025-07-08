@@ -14,7 +14,9 @@ The workflow includes:
 7. Monitoring setup
 """
 
-import rich
+from rich import pretty
+pretty.install()
+from rich import print 
 import pandas as pd
 import numpy as np
 import sys
@@ -28,6 +30,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 import warnings
 warnings.filterwarnings('ignore')
+
+
 
 # Add parent directories to path to import ml4risk modules
 sys.path.append('../01_data_preparation')
