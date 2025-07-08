@@ -1,0 +1,197 @@
+# Credit Risk Model Configuration
+# This file contains all configuration parameters for the credit risk modeling workflow
+
+# Data Configuration
+data:
+  # Path to raw data files
+  raw_data_path: "../../data/raw/"
+  processed_data_path: "../../data/processed/"
+  
+  # Data quality thresholds
+  max_missing_rate: 0.95  # Remove features with >95% missing
+  min_variance_threshold: 0.001  # Remove features with very low variance
+  
+  # Data dictionary path (for Experian or other bureau data)
+  data_dictionary_path: "../../data/dictionaries/experian_dict.csv"
+
+# Performance Window Configuration
+performance_window:
+  # Target definition parameters
+  observation_window: 12  # Months to observe before performance window
+  performance_window: 12  # Months to track performance
+  bad_definition: "90DPD"  # Definition of bad (30DPD, 60DPD, 90DPD, Charge-off)
+  
+  # Vintage analysis parameters
+  vintage_months: [3, 6, 9, 12, 18, 24]
+  segment_by: null  # Optional: segment by product_type, channel, etc.
+
+# Reject Inference Configuration
+reject_inference:
+  # Method selection
+  method: "fuzzy_augmentation"  # Options: fuzzy_augmentation, hard_cutoff, performance_scoring
+  
+  # Fuzzy augmentation parameters
+  fuzzy_augmentation:
+    n_iterations: 5
+    convergence_threshold: 0.001
+    base_estimator: "logistic_regression"
+  
+  # Hard cutoff parameters
+  hard_cutoff:
+    cutoff_percentile: 20  # Assign bottom X% of rejects as bad
+  
+  # External score for inference
+  external_score_column: "bureau_score"
+
+# Feature Engineering Configuration
+feature_engineering:
+  # WOE transformation parameters
+  woe:
+    method: "tree"  # Options: tree, equal
+    num_bin_start: 20  # Initial number of bins
+    min_samples_leaf_pct: 0.05  # Minimum 5% of population per bin
+    min_iv: 0.02  # Minimum IV to keep feature
+    
+  # Special value handling
+  special_values: [-999, -998, -997, -1]
+  
+  # Feature selection
+  max_features: 30  # Maximum features to select
+  correlation_threshold: 0.8  # Remove highly correlated features
+
+# Model Development Configuration
+model_development:
+  # Model type
+  model_type: "logistic_regression"  # Options: logistic_regression, lightgbm
+  
+  # Scorecard parameters
+  scorecard:
+    base_score: 600  # Score at 1:1 odds
+    pdo: 20  # Points to double the odds
+    
+  # Logistic regression parameters
+  logistic_regression:
+    penalty: "l2"
+    C: 1.0
+    solver: "lbfgs"
+    max_iter: 1000
+    class_weight: "balanced"
+    
+  # LightGBM parameters
+  lightgbm:
+    num_leaves: 31
+    learning_rate: 0.05
+    feature_fraction: 0.8
+    bagging_fraction: 0.8
+    bagging_freq: 5
+    min_data_in_leaf: 100
+    max_depth: 5
+    lambda_l1: 0.1
+    lambda_l2: 0.1
+    
+  # Validation parameters
+  validation:
+    test_size: 0.3
+    n_folds: 5
+    stratify: true
+    random_state: 42
+
+# Score Alignment Configuration
+score_alignment:
+  # Alignment method
+  method: "cumulative_bad_rate"  # Options: cumulative_bad_rate, isotonic, piecewise_linear
+  
+  # Business rules to preserve
+  business_rules:
+    approval_threshold: 650
+    tier_boundaries: [600, 650, 700, 750]
+    
+  # PSI thresholds
+  psi_warning: 0.1
+  psi_critical: 0.25
+
+# Monitoring Configuration
+monitoring:
+  # Monitoring frequency
+  frequency: "daily"  # Options: hourly, daily, weekly, monthly
+  
+  # Performance thresholds
+  thresholds:
+    psi:
+      warning: 0.1
+      critical: 0.25
+    auc_degradation:
+      warning: 0.03
+      critical: 0.05
+    score_shift:
+      warning: 20
+      critical: 50
+    bad_rate_deviation:
+      warning: 0.2  # 20% relative change
+      critical: 0.5  # 50% relative change
+      
+  # Features to monitor
+  features_to_monitor: "all"  # Or specify list of features
+  
+  # Retraining triggers
+  retraining:
+    auto_retrain: false
+    psi_trigger: 0.25
+    auc_degradation_trigger: 0.05
+    min_days_between_retraining: 90
+    
+  # Alert configuration
+  alerts:
+    channels: ["email", "slack"]
+    email_recipients: ["risk-team@company.com"]
+    slack_webhook: "https://hooks.slack.com/services/..."
+
+# Output Configuration
+output:
+  # Model artifacts
+  model_path: "./models/"
+  model_name_prefix: "credit_risk_model"
+  
+  # Reports
+  reports_path: "./reports/"
+  generate_pdf_report: true
+  
+  # Monitoring dashboards
+  dashboard_path: "./dashboards/"
+  dashboard_update_frequency: "hourly"
+  
+  # Logging
+  log_path: "./logs/"
+  log_level: "INFO"  # Options: DEBUG, INFO, WARNING, ERROR
+
+# Production Deployment
+deployment:
+  # API configuration
+  api:
+    host: "0.0.0.0"
+    port: 8080
+    max_batch_size: 1000
+    timeout_seconds: 30
+    
+  # Model versioning
+  versioning:
+    strategy: "timestamp"  # Options: timestamp, semantic
+    keep_n_versions: 5
+    
+  # A/B testing
+  ab_testing:
+    enabled: false
+    control_model_version: "v1.0"
+    treatment_model_version: "v1.1"
+    traffic_split: 0.1  # 10% to treatment
+    
+  # Feature store integration
+  feature_store:
+    enabled: false
+    provider: "feast"  # Options: feast, tecton
+    
+  # Model registry
+  model_registry:
+    enabled: true
+    provider: "mlflow"  # Options: mlflow, sagemaker
+    tracking_uri: "http://mlflow-server:5000"
