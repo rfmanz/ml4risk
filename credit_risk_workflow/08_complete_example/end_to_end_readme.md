@@ -24,6 +24,19 @@ Generates loan performance data for approved loans:
 - **Defines target variable** as loans reaching 90+ days past due within 12 months
 - **Creates realistic default patterns** based on borrower risk characteristics
 
+**Why This Step is Critical**:
+Step 2 creates the **target variable** that the model will actually predict. This is essential because:
+
+- **Step 1** only creates approval decisions (approved/rejected)
+- **But we don't want to predict approval decisions** - we want to predict **loan performance** (will it default?)
+- **Approval decisions** are made by existing (often flawed) systems
+- **Loan performance** is what actually matters for business risk
+- **The model needs to predict future defaults**, not replicate past approval decisions
+
+**Example**: A loan might be **approved** in Step 1 (based on decent credit score) but **default** in Step 2 (due to job loss, economic changes, etc.). The model learns: "loans with these characteristics tend to default."
+
+Without Step 2, you'd just be building a model that mimics the original approval process, which defeats the purpose of building a better risk model. **Step 2 creates the "ground truth" of what actually happened to the loans**, which is what the model learns to predict.
+
 ### Step 3: Reject Inference
 Corrects for selection bias using fuzzy augmentation:
 - **Handles rejected applications** that have no performance data
