@@ -14,6 +14,7 @@ The workflow includes:
 7. Monitoring setup
 """
 
+import rich
 import pandas as pd
 import numpy as np
 import sys
@@ -39,7 +40,7 @@ sys.path.append('../07_monitoring')
 
 print("=== End-to-End Credit Risk Model Development ===\n")
 
-# Step 1: Data Generation and Preparation
+#region Step 1: Data Generation and Preparation
 print("Step 1: Data Generation and Preparation")
 print("-" * 50)
 
@@ -107,8 +108,9 @@ rejected_data = application_data[application_data['approved'] == 0].copy()
 
 print(f"\nApproved applications: {len(approved_data)}")
 print(f"Rejected applications: {len(rejected_data)}")
+#endregion
 
-# Step 2: Performance Analysis (for approved loans)
+#region Step 2: Performance Analysis and Target Definition
 print("\n\nStep 2: Performance Analysis and Target Definition")
 print("-" * 50)
 
@@ -168,8 +170,9 @@ approved_data['target'] = approved_data['application_id'].map(target_definition)
 
 print(f"Target variable defined based on 90+ DPD in first 12 months")
 print(f"Bad rate in approved population: {approved_data['target'].mean():.2%}")
+#endregion
 
-# Step 3: Reject Inference
+#region Step 3: Reject Inference
 print("\n\nStep 3: Reject Inference")
 print("-" * 50)
 
@@ -218,8 +221,9 @@ for idx, (_, reject) in enumerate(rejected_data.iterrows()):
 
 print(f"Augmented dataset size: {len(augmented_data)}")
 print(f"Weighted bad rate: {(augmented_data['target'] * augmented_data['weight']).sum() / augmented_data['weight'].sum():.2%}")
+#endregion
 
-# Step 4: Feature Engineering with WOE
+#region Step 4: Feature Engineering with WOE
 print("\n\nStep 4: Feature Engineering with WOE")
 print("-" * 50)
 
@@ -261,8 +265,9 @@ print(iv_df.head(10))
 selected_features = iv_df[iv_df['iv'] > 0.02]['attr'].tolist()
 selected_features_woe = [f + '_woe' for f in selected_features]
 print(f"\nSelected {len(selected_features)} features with IV > 0.02")
+#endregion
 
-# Step 5: Model Development
+#region Step 5: Model Development
 print("\n\nStep 5: Model Development")
 print("-" * 50)
 
@@ -313,8 +318,9 @@ print(f"\nScorecard Parameters:")
 print(f"- Base score: {base_score}")
 print(f"- PDO: {pdo}")
 print(f"- Intercept points: {intercept_points:.2f}")
+#endregion
 
-# Step 6: Score Calculation and Alignment
+#region Step 6: Score Calculation and Alignment
 print("\n\nStep 6: Score Calculation and Alignment")
 print("-" * 50)
 
@@ -359,8 +365,9 @@ band_analysis = pd.DataFrame({
 band_analysis.columns = ['score_band', 'bad_rate', 'count']
 print("\nBad rate by score band:")
 print(band_analysis)
+#endregion
 
-# Step 7: Model Deployment Preparation
+#region Step 7: Model Deployment Preparation
 print("\n\nStep 7: Model Deployment Preparation")
 print("-" * 50)
 
@@ -393,8 +400,9 @@ woe_json = woe_transformer.woe_json(selected_features)
 with open('woe_specifications.json', 'w') as f:
     json.dump(json.loads(woe_json), f, indent=2)
 print("WOE specifications saved to: woe_specifications.json")
+#endregion
 
-# Step 8: Monitoring Setup
+#region Step 8: Monitoring Setup
 print("\n\nStep 8: Monitoring Setup")
 print("-" * 50)
 
@@ -423,8 +431,9 @@ monitoring_config = {
 with open('monitoring_config.json', 'w') as f:
     json.dump(monitoring_config, f, indent=2)
 print("Monitoring configuration saved to: monitoring_config.json")
+#endregion
 
-# Final Summary
+#region Final Summary and Visualization
 print("\n\n" + "=" * 60)
 print("MODEL DEVELOPMENT SUMMARY")
 print("=" * 60)
@@ -494,3 +503,4 @@ plt.savefig('model_summary.png', dpi=300, bbox_inches='tight')
 plt.show()
 
 print("\nModel summary visualization saved to: model_summary.png")
+#endregion

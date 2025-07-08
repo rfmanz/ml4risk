@@ -1,0 +1,19 @@
+{
+  "name": "python-dev-container",
+  "build": {
+    "context": "..",
+    "dockerfile": "Dockerfile"
+  },
+  "forwardPorts": [8888],
+  "remoteUser": "jovyan",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.shell.linux": "/bin/bash"
+      },
+      "extensions": [
+        "ms-python.python"
+      ]
+    }
+  }
+}
